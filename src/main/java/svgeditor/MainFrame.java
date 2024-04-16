@@ -10,6 +10,9 @@ public class MainFrame extends JFrame
     private int cisloLine;
     private int cisloKruh;
     private int cisloOval;
+    private MyPanel panel;
+    private ShapeTableModel model;
+    private ShapeTable table;
 
     public MainFrame() {
         super("SVG Editor");
@@ -20,7 +23,7 @@ public class MainFrame extends JFrame
         add(tabsPane, BorderLayout.CENTER); // Přidání do BorderLayout.CENTER
 
         // Vytvoření panelů pro jednotlivé záložky
-        MyPanel panel = new MyPanel();
+        panel = new MyPanel();
         MyPanel panelSVG = new MyPanel();
 
         // Přidání panelů do záložek
@@ -28,8 +31,8 @@ public class MainFrame extends JFrame
         tabsPane.addTab("SVG", panelSVG);
 
         // Vytvoření tabulky a jejího modelu
-        ShapeTableModel model = new ShapeTableModel();
-        ShapeTable table = new ShapeTable();
+        model = new ShapeTableModel();
+        table = new ShapeTable();
         table.setModel(model); // Nastavení modelu pro tabulku
 
         // Vytvoření JScrollPane pro tabulku
@@ -43,22 +46,23 @@ public class MainFrame extends JFrame
         // Přidání rozdělovače do hlavního okna
         getContentPane().add(splitPane, BorderLayout.CENTER);
 
-        // Přidání několika tvarů do panelu
-        panel.addShape(new Rectangle(300, 200, "#2C2F93", "Obdelnik" + (cisloObdelnik + 1), 80, 60));
-        panel.addShape(new Circle(400, 500, 40, "#2C2F93", "Kruh" + (cisloKruh + 1)));
-        panel.addShape(new Line(600, 700, "#2C2F93", "Linka" + (cisloLine + 1), 50, 50));
-        panel.addShape(new Oval(800, 300, "#2C2F93", "Oval" + (cisloOval + 1), 100, 50));
-
-        model.addShape(new Rectangle(300, 200, "#2C2F93", "Obdelnik" + (cisloObdelnik + 1), 80, 60));
-        model.addShape(new Circle(400, 500, 40, "#2C2F93", "Kruh" + (cisloKruh + 1)));
-        model.addShape(new Line(600, 700, "#2C2F93", "Linka" + (cisloLine + 1), 50, 50));
-        model.addShape(new Oval(800, 300, "#2C2F93", "Oval" + (cisloOval + 1), 100, 50));
+        // Přidání několika tvarů do panelu a modelu tabulky
+        addShape(new Rectangle(300, 200, "#2C2F93", "Obdelnik"  + (cisloObdelnik + 1), 80, 60, 2));
+        addShape(new Circle(400, 500, 40, "#2C2F93", "Kruh"  + (cisloKruh + 1), 2));
+        addShape(new Line(600, 700, "#2C2F93", "Linka"  + (cisloLine + 1), 50, 50, 2));
+        addShape(new Oval(800, 300, "#2C2F93", "Oval" + (cisloOval + 1), 100, 50, 2));
 
         // Pack
         pack();
+
         // Zobrazení hlavního okna
         setVisible(true);
 
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+    }
+
+    public void addShape(Shape shape) {
+        panel.addShape(shape);
+        model.addShape(shape);
     }
 }
