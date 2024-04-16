@@ -2,12 +2,12 @@ package svgeditor;
 
 import java.awt.*;
 
-public class Obdelnik extends Shape {
+public class Rectangle extends Shape {
     private int width;
     private int height;
 
-    public Obdelnik(int x, int y, String barva, int width, int height) {
-        super(x, y, barva);
+    public Rectangle(int x, int y, String color, String name, int width, int height) {
+        super(x, y, color, name);
         this.width = width;
         this.height = height;
     }

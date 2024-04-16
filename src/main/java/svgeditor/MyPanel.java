@@ -1,20 +1,19 @@
 package svgeditor;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 
-public class MujPanel extends JPanel {
+public class MyPanel extends JPanel {
     private List<Shape> tvary;
 
-    public MujPanel() {
+    public MyPanel() {
         tvary = new ArrayList<>();
     }
 
-    public void addTvar(Shape tvar) {
+    public void addShape(Shape tvar) {
         tvary.add(tvar);
         repaint();
     }

@@ -6,8 +6,8 @@ public class Oval extends Shape{
     private int width;
     private int height;
 
-    public Oval(int x, int y, String barva, int width, int height) {
-        super(x, y, barva);
+    public Oval(int x, int y, String color, String name, int width, int height) {
+        super(x, y, color, name);
         this.width = width;
         this.height = height;
     }

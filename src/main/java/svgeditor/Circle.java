@@ -1,11 +1,11 @@
 package svgeditor;
 import java.awt.*;
 
-public class Kruh extends Shape{
+public class Circle extends Shape{
     private int radius;
 
-    public Kruh(int x, int y, int radius, String color) {
-        super(x, y, color);
+    public Circle(int x, int y, int radius, String color, String name) {
+        super(x, y, color, name);
         this.radius = radius;
     }
 
