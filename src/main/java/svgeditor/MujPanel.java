@@ -19,6 +19,10 @@ public class MujPanel extends JPanel {
         repaint();
     }
 
+    public List getTvar(){
+        return tvary;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

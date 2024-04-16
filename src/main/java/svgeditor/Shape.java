@@ -11,6 +11,18 @@ public abstract class Shape {
         this.color = color;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
     public abstract void draw(Graphics g);
 }
 

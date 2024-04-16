@@ -1,6 +1,8 @@
 package svgeditor;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.border.*;
 
 public class MainFrame extends JFrame
 {
