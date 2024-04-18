@@ -2,6 +2,8 @@ package svgeditor;
 
 import javax.swing.*;
 import java.awt.BorderLayout;
+import javax.swing.event.*;
+import java.awt.event.*;
 
 public class MainFrame extends JFrame
 {
@@ -13,6 +15,7 @@ public class MainFrame extends JFrame
     private MyPanel panel;
     private ShapeTableModel model;
     private ShapeTable table;
+    private AttributesTable attributesTable;
 
     public MainFrame() {
         super("SVG Editor");
@@ -38,6 +41,11 @@ public class MainFrame extends JFrame
         // Vytvoření JScrollPane pro tabulku
         JScrollPane tableScrollPane = new JScrollPane(table);
 
+        // Vytvoření JScrollPane pro novou tabulku atributů
+        JScrollPane attributeScrollPane = new JScrollPane();
+        attributesTable = new AttributesTable(new AttributesTableModel()); // Vytvoříme instanci tabulky atributů
+        attributeScrollPane.setViewportView(attributesTable); // Nastavíme tabulku do JScrollPane
+
         // Vytvoření rozdělovače pro umístění tabulky a záložek na BorderLayout.CENTER
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tabsPane, tableScrollPane);
         splitPane.setResizeWeight(1); // Nastavení poměru šířky panelů v rozdělovači
@@ -46,11 +54,36 @@ public class MainFrame extends JFrame
         // Přidání rozdělovače do hlavního okna
         getContentPane().add(splitPane, BorderLayout.CENTER);
 
+        // Vytvoření Listeneru pro události kliknutí na tabulku
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    Shape selectedShape = model.getShape(row);
+                    AttributesTableModel attributesTableModel = new AttributesTableModel();
+                    attributesTableModel.setShape(selectedShape); // Nastavíme vybraný tvar do modelu tabulky atributů
+                    attributesTable.setModel(attributesTableModel); // Nastavíme nový model pro tabulku atributů
+
+                    // Aktualizace zobrazení
+                    attributesTable.repaint(); // Přidáme repaint, aby se tabulka překreslila se změněným modelem
+                }
+            }
+        });
+
+
         // Přidání několika tvarů do panelu a modelu tabulky
         addShape(new Rectangle(300, 200, "#2C2F93", "Obdelnik"  + (cisloObdelnik + 1), 80, 60, 2));
         addShape(new Circle(400, 500, 40, "#2C2F93", "Kruh"  + (cisloKruh + 1), 2));
         addShape(new Line(600, 700, "#2C2F93", "Linka"  + (cisloLine + 1), 50, 50, 2));
         addShape(new Oval(800, 300, "#2C2F93", "Oval" + (cisloOval + 1), 100, 50, 2));
+
+        // Vytvoření nového rozdělovače pro umístění nové tabulky pod stávající tabulkou
+        JSplitPane bottomSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableScrollPane, attributeScrollPane);
+        bottomSplitPane.setResizeWeight(0.5); // Nastavení poměru výšky panelů v novém rozdělovači
+
+        // Přidání nového rozdělovače pod stávající rozdělovač
+        splitPane.setBottomComponent(bottomSplitPane);
 
         // Pack
         pack();

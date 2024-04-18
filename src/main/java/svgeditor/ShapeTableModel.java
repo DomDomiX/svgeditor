@@ -2,13 +2,14 @@ package svgeditor;
 
 import javax.swing.table.AbstractTableModel;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ShapeTableModel extends AbstractTableModel {
 
     private List<Shape> shapes;
-    private String[] columnNames = {"Typ", "X", "Y", "Barva"};
+    private String[] columnNames = {"Tvary"};
 
     public ShapeTableModel() {
         this.shapes = new ArrayList<>();
@@ -35,12 +36,6 @@ public class ShapeTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0:
                 return shape.getName();
-            case 1:
-                return shape.getX();
-            case 2:
-                return shape.getY();
-            case 3:
-                return shape.getColor();
             default:
                 return null;
         }
@@ -49,5 +44,12 @@ public class ShapeTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int column) {
         return columnNames[column];
+    }
+
+    public Shape getShape(int rowIndex) {
+        if (rowIndex >= 0 && rowIndex < shapes.size()) {
+            return shapes.get(rowIndex);
+        }
+        return null;
     }
 }
