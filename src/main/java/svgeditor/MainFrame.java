@@ -35,20 +35,19 @@ public class MainFrame extends JFrame
 
         // Vytvoření tabulky a jejího modelu
         model = new ShapeTableModel();
-        table = new ShapeTable();
+        table = new ShapeTable(); // Vytvoření instance ShapeTable
         table.setModel(model); // Nastavení modelu pro tabulku
 
         // Vytvoření JScrollPane pro tabulku
         JScrollPane tableScrollPane = new JScrollPane(table);
 
         // Vytvoření JScrollPane pro novou tabulku atributů
-        JScrollPane attributeScrollPane = new JScrollPane();
         attributesTable = new AttributesTable(new AttributesTableModel()); // Vytvoříme instanci tabulky atributů
-        attributeScrollPane.setViewportView(attributesTable); // Nastavíme tabulku do JScrollPane
+        JScrollPane attributeScrollPane = new JScrollPane(attributesTable); // Nastavíme tabulku do JScrollPane
 
         // Vytvoření rozdělovače pro umístění tabulky a záložek na BorderLayout.CENTER
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tabsPane, tableScrollPane);
-        splitPane.setResizeWeight(1); // Nastavení poměru šířky panelů v rozdělovači
+        splitPane.setResizeWeight(0.75); // Nastavení poměru šířky panelů v rozdělovači
         splitPane.setEnabled(false); // Nastavení nezměnitelnosti rozdělovače
 
         // Přidání rozdělovače do hlavního okna
@@ -61,36 +60,29 @@ public class MainFrame extends JFrame
                 int row = table.getSelectedRow();
                 if (row >= 0) {
                     Shape selectedShape = model.getShape(row);
-                    AttributesTableModel attributesTableModel = new AttributesTableModel();
-                    attributesTableModel.setShape(selectedShape); // Nastavíme vybraný tvar do modelu tabulky atributů
-                    attributesTable.setModel(attributesTableModel); // Nastavíme nový model pro tabulku atributů
-
-                    // Aktualizace zobrazení
+                    AttributesTableModel attributesTableModel = (AttributesTableModel) attributesTable.getModel();
+                    attributesTableModel.setShape(selectedShape);
                     attributesTable.repaint(); // Přidáme repaint, aby se tabulka překreslila se změněným modelem
                 }
             }
         });
 
-
         // Přidání několika tvarů do panelu a modelu tabulky
-        addShape(new Rectangle(300, 200, "#2C2F93", "Obdelnik"  + (cisloObdelnik + 1), 80, 60, 2));
-        addShape(new Circle(400, 500, 40, "#2C2F93", "Kruh"  + (cisloKruh + 1), 2));
-        addShape(new Line(600, 700, "#2C2F93", "Linka"  + (cisloLine + 1), 50, 50, 2));
-        addShape(new Oval(800, 300, "#2C2F93", "Oval" + (cisloOval + 1), 100, 50, 2));
+        addShape(new Rectangle(300, 200, "#2C2F93", "Obdelnik" + (++cisloObdelnik), 80, 60, 2));
+        addShape(new Circle(400, 500, 40, "#2C2F93", "Kruh" + (++cisloKruh), 2));
+        addShape(new Line(600, 700, "#2C2F93", "Linka" + (++cisloLine), 50, 50, 2));
+        addShape(new Oval(800, 300, "#2C2F93", "Oval" + (++cisloOval), 100, 50, 2));
 
         // Vytvoření nového rozdělovače pro umístění nové tabulky pod stávající tabulkou
         JSplitPane bottomSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableScrollPane, attributeScrollPane);
         bottomSplitPane.setResizeWeight(0.5); // Nastavení poměru výšky panelů v novém rozdělovači
 
         // Přidání nového rozdělovače pod stávající rozdělovač
-        splitPane.setBottomComponent(bottomSplitPane);
-
-        // Pack
-        pack();
+        splitPane.setRightComponent(bottomSplitPane);
 
         // Zobrazení hlavního okna
+        pack();
         setVisible(true);
-
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
     }
 
@@ -98,4 +90,5 @@ public class MainFrame extends JFrame
         panel.addShape(shape);
         model.addShape(shape);
     }
+
 }
