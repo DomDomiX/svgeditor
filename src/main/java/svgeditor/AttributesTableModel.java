@@ -1,13 +1,19 @@
 package svgeditor;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
 public class AttributesTableModel extends AbstractTableModel {
     private Shape shape;
-    private String[] columnNames = {"Atribut", "Hodnota"}; // Dva sloupce: název a hodnota
+    private MyPanel panel;
+    private String[] columnNames = {"Název", "Hodnota"}; // Dva sloupce: název a hodnota
 
     public AttributesTableModel() {
-        this.shape = null; // Nastavíme shape na null, aby byla možnost vytvářet instanci bez parametrů
+        this.shape = null; // Shape na null, aby byla možnost vytvářet instanci bez parametrů
+    }
+
+    public void setPanel(MyPanel panel) {
+        this.panel = panel;
     }
 
     public void setShape(Shape shape) {
@@ -59,6 +65,49 @@ public class AttributesTableModel extends AbstractTableModel {
                 }
             default:
                 return null;
+        }
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return columnIndex == 1; // Umožní editaci pouze ve druhém sloupci, kde jsou hodnoty
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if (shape == null || columnIndex != 1) {
+            return;
+        }
+        switch (rowIndex) {
+            case 0:
+                shape.setName((String) aValue);
+                break;
+            case 1:
+                shape.setColor((String) aValue);
+                break;
+            case 2:
+                try {
+                    shape.setX(Integer.parseInt((String) aValue));
+                } catch (NumberFormatException e) {
+                    // Handle error
+                    JOptionPane.showMessageDialog(null, "Invalid number format for X position.");
+                    return;
+                }
+                break;
+            case 3:
+                try {
+                    shape.setY(Integer.parseInt((String) aValue));
+                } catch (NumberFormatException e) {
+                    // Handle error
+                    JOptionPane.showMessageDialog(null, "Invalid number format for Y position.");
+                    return;
+                }
+                break;
+        }
+        fireTableDataChanged(); // Informuje tabulku o změně dat
+
+        if (panel != null) { // Překreslí panel, pokud není null, aby došlo k aktualizaci jeho zobrazení
+            panel.repaint();
         }
     }
 

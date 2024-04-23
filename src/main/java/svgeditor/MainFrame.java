@@ -2,8 +2,8 @@ package svgeditor;
 
 import javax.swing.*;
 import java.awt.BorderLayout;
-import javax.swing.event.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainFrame extends JFrame
 {
@@ -13,9 +13,10 @@ public class MainFrame extends JFrame
     private int cisloKruh;
     private int cisloOval;
     private MyPanel panel;
-    private ShapeTableModel model;
-    private ShapeTable table;
+    private ShapeTableModel shapeModel;
+    private ShapeTable shapeTable;
     private AttributesTable attributesTable;
+    private AttributesTableModel attributesModel;
 
     public MainFrame() {
         super("SVG Editor");
@@ -34,15 +35,17 @@ public class MainFrame extends JFrame
         tabsPane.addTab("SVG", panelSVG);
 
         // Vytvoření tabulky a jejího modelu
-        model = new ShapeTableModel();
-        table = new ShapeTable(); // Vytvoření instance ShapeTable
-        table.setModel(model); // Nastavení modelu pro tabulku
+        shapeModel = new ShapeTableModel();
+        shapeTable = new ShapeTable(); // Vytvoření instance ShapeTable
+        shapeTable.setModel(shapeModel); // Nastavení modelu pro tabulku
 
         // Vytvoření JScrollPane pro tabulku
-        JScrollPane tableScrollPane = new JScrollPane(table);
+        JScrollPane tableScrollPane = new JScrollPane(shapeTable);
 
         // Vytvoření JScrollPane pro novou tabulku atributů
-        attributesTable = new AttributesTable(new AttributesTableModel()); // Vytvoříme instanci tabulky atributů
+        attributesModel = new AttributesTableModel();
+        attributesTable = new AttributesTable(attributesModel); // Vytvoříme instanci tabulky atributů
+        attributesModel.setPanel(panel);
         JScrollPane attributeScrollPane = new JScrollPane(attributesTable); // Nastavíme tabulku do JScrollPane
 
         // Vytvoření rozdělovače pro umístění tabulky a záložek na BorderLayout.CENTER
@@ -54,12 +57,12 @@ public class MainFrame extends JFrame
         getContentPane().add(splitPane, BorderLayout.CENTER);
 
         // Vytvoření Listeneru pro události kliknutí na tabulku
-        table.addMouseListener(new MouseAdapter() {
+        shapeTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int row = table.getSelectedRow();
+                int row = shapeTable.getSelectedRow();
                 if (row >= 0) {
-                    Shape selectedShape = model.getShape(row);
+                    Shape selectedShape = shapeModel.getShape(row);
                     AttributesTableModel attributesTableModel = (AttributesTableModel) attributesTable.getModel();
                     attributesTableModel.setShape(selectedShape);
                     attributesTable.repaint(); // Přidáme repaint, aby se tabulka překreslila se změněným modelem
@@ -88,7 +91,7 @@ public class MainFrame extends JFrame
 
     public void addShape(Shape shape) {
         panel.addShape(shape);
-        model.addShape(shape);
+        shapeModel.addShape(shape);
     }
 
 }
