@@ -23,7 +23,7 @@ public class AttributesTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return shape != null ? 4 : 0; // Čtyři řádky pro atributy tvaru
+        return shape != null ? 5 : 0; // Čtyři řádky pro atributy tvaru
     }
 
     @Override
@@ -44,8 +44,10 @@ public class AttributesTableModel extends AbstractTableModel {
                     case 1:
                         return "Barva";
                     case 2:
-                        return "X pozice";
+                        return "Šířka čáry";
                     case 3:
+                        return "X pozice";
+                    case 4:
                         return "Y pozice";
                     default:
                         return null;
@@ -57,8 +59,10 @@ public class AttributesTableModel extends AbstractTableModel {
                     case 1:
                         return shape.getColor();
                     case 2:
-                        return shape.getX();
+                        return shape.getThickness();
                     case 3:
+                        return shape.getX();
+                    case 4:
                         return shape.getY();
                     default:
                         return null;
@@ -87,19 +91,28 @@ public class AttributesTableModel extends AbstractTableModel {
                 break;
             case 2:
                 try {
-                    shape.setX(Integer.parseInt((String) aValue));
+                    shape.setThickness(Integer.parseInt((String) aValue));
                 } catch (NumberFormatException e) {
                     // Handle error
-                    JOptionPane.showMessageDialog(null, "Invalid number format for X position.");
+                    JOptionPane.showMessageDialog(null, "Špatný formát pro nastavování hodnoty šířky.");
                     return;
                 }
                 break;
             case 3:
                 try {
+                    shape.setX(Integer.parseInt((String) aValue));
+                } catch (NumberFormatException e) {
+                    // Handle error
+                    JOptionPane.showMessageDialog(null, "Špatný formát pro nastavení hodnoty X.");
+                    return;
+                }
+                break;
+            case 4:
+                try {
                     shape.setY(Integer.parseInt((String) aValue));
                 } catch (NumberFormatException e) {
                     // Handle error
-                    JOptionPane.showMessageDialog(null, "Invalid number format for Y position.");
+                    JOptionPane.showMessageDialog(null, "Špatný formát pro nastavení hodnoty Y.");
                     return;
                 }
                 break;
