@@ -2,6 +2,7 @@ package svgeditor;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 
 public class AttributesTableModel extends AbstractTableModel {
     private Shape shape;
@@ -57,7 +58,7 @@ public class AttributesTableModel extends AbstractTableModel {
                     case 0:
                         return shape.getName();
                     case 1:
-                        return shape.getColor();
+                        return shape.getColor(); // Vrátí hexadecimální řetězec
                     case 2:
                         return shape.getThickness();
                     case 3:
@@ -87,7 +88,16 @@ public class AttributesTableModel extends AbstractTableModel {
                 shape.setName((String) aValue);
                 break;
             case 1:
-                shape.setColor((String) aValue);
+                // Spouštíme JColorChooser, pokud uživatel chce změnit barvu
+                Color initialColor = Color.decode(shape.getColor());  // Dekódujeme hexa barvu na Color
+                Color newColor = JColorChooser.showDialog(null, "Vyberte barvu", initialColor);
+
+                if (newColor != null) { // Pokud uživatel nezrušil dialog
+                    String hexColor = String.format("#%02X%02X%02X", newColor.getRed(), newColor.getGreen(), newColor.getBlue());
+                    System.out.println("Stará barva: " + shape.getColor() + ", Nová barva: " + hexColor); // Kontrolní výpis
+                    shape.setColor(hexColor);
+                    panel.repaint();
+                }
                 break;
             case 2:
                 try {
@@ -118,10 +128,7 @@ public class AttributesTableModel extends AbstractTableModel {
                 break;
         }
         fireTableDataChanged(); // Informuje tabulku o změně dat
-
-        if (panel != null) { // Překreslí panel, pokud není null, aby došlo k aktualizaci jeho zobrazení
-            panel.repaint();
-        }
+        panel.repaint(); // Zajištění překreslení pro všechny případy
     }
 
     @Override

@@ -15,6 +15,8 @@ public class Line extends Shape{
     @Override
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+        Color color = Color.decode(this.color);
+        g2d.setColor(color); // Nastavení barvy pro kreslení
         g2d.setStroke(new BasicStroke(getThickness())); // Nastavení tloušťky čáry
         g.drawLine(x, y, width, height);
     }
