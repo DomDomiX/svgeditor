@@ -1,5 +1,6 @@
 package svgeditor;
 import java.awt.*;
+import java.util.Map;
 
 public abstract class Shape {
     protected int x, y;
@@ -13,6 +14,28 @@ public abstract class Shape {
         this.color = color;
         this.name = name;
         this.thickness = thickness;
+    }
+
+    public void setAttribute(String key, Object value) {
+        switch (key) {
+            case "Jméno":
+                this.name = (String) value;
+                break;
+            case "Barva":
+                this.color = (String) value;
+                break;
+            case "Šířka čáry":
+                this.thickness = Integer.parseInt(value.toString());
+                break;
+            case "X pozice":
+                this.x = Integer.parseInt(value.toString());
+                break;
+            case "Y pozice":
+                this.y = Integer.parseInt(value.toString());
+                break;
+            default:
+                throw new IllegalArgumentException("Neznámý atribut: " + key);
+        }
     }
 
     public int getX() {
@@ -54,6 +77,8 @@ public abstract class Shape {
     public void setThickness(int thickness) {
         this.thickness = thickness;
     }
+
+    public abstract Map<String, Object> getAttributes();
 
     public abstract void draw(Graphics g);
 }

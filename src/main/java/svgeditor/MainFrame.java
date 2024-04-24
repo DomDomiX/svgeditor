@@ -1,6 +1,8 @@
 package svgeditor;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -57,15 +59,17 @@ public class MainFrame extends JFrame
         getContentPane().add(splitPane, BorderLayout.CENTER);
 
         // Vytvoření Listeneru pro události kliknutí na tabulku
-        shapeTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = shapeTable.getSelectedRow();
-                if (row >= 0) {
-                    Shape selectedShape = shapeModel.getShape(row);
-                    AttributesTableModel attributesTableModel = (AttributesTableModel) attributesTable.getModel();
-                    attributesTableModel.setShape(selectedShape);
-                    attributesTable.repaint(); // Přidáme repaint, aby se tabulka překreslila se změněným modelem
+        shapeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                int viewRow = shapeTable.getSelectedRow();
+                if (viewRow < 0) {
+                    // no rows are selected
+                    attributesModel.setShape(null);
+                } else {
+                    int modelRow = shapeTable.convertRowIndexToModel(viewRow);
+                    Shape selectedShape = shapeModel.getShape(modelRow);
+                    attributesModel.setShape(selectedShape);
+                    attributesTable.repaint(); // Refresh attribute table display
                 }
             }
         });

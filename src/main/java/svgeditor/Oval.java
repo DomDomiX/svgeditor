@@ -1,6 +1,8 @@
 package svgeditor;
 
 import java.awt.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Oval extends Shape{
     private int width;
@@ -10,6 +12,42 @@ public class Oval extends Shape{
         super(x, y, color, name, thickness);
         this.width = width;
         this.height = height;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        Map<String, Object> attributes = new LinkedHashMap<>();
+        attributes.put("Jméno", getName());
+        attributes.put("Barva", getColor());
+        attributes.put("Šířka čáry", getThickness());
+        attributes.put("Šířka", getWidth());
+        attributes.put("Výška", getHeight());
+        attributes.put("X pozice", getX());
+        attributes.put("Y pozice", getY());
+        return attributes;
+    }
+
+    @Override
+    public void setAttribute(String key, Object value) {
+        switch (key) {
+            case "Šířka":
+                this.width = Integer.parseInt(value.toString());
+                break;
+            case "Výška":
+                this.height = Integer.parseInt(value.toString());
+                break;
+            default:
+                super.setAttribute(key, value);  // Volání metody v nadřazené třídě, pokud se nejedná o atribut specifický pro Line
+                break;
+        }
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     @Override

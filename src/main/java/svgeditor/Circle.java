@@ -1,5 +1,7 @@
 package svgeditor;
 import java.awt.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Circle extends Shape{
     private int radius;
@@ -7,6 +9,35 @@ public class Circle extends Shape{
     public Circle(int x, int y, int radius, String color, String name, int thickness) {
         super(x, y, color, name, thickness);
         this.radius = radius;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        Map<String, Object> attributes = new LinkedHashMap<>();
+        attributes.put("Jméno", getName());
+        attributes.put("Barva", getColor());
+        attributes.put("Šířka čáry", getThickness());
+        attributes.put("Rádius", getRadius());
+        attributes.put("X pozice", getX());
+        attributes.put("Y pozice", getY());
+        return attributes;
+    }
+
+    @Override
+    public void setAttribute(String key, Object value) {
+        switch (key) {
+            case "Rádius":
+                this.radius = Integer.parseInt(value.toString());  // Ujistěte se, že hodnota je ve správném formátu a může být převedena na int
+                break;
+            default:
+                super.setAttribute(key, value);  // Správně delegujte všechny ostatní atributy na nadřazenou třídu
+                break;
+        }
+    }
+
+
+    public int getRadius() {
+        return radius;
     }
 
     @Override
