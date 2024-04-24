@@ -41,6 +41,11 @@ public class Oval extends Shape{
                 break;
         }
     }
+    @Override
+    public String toSVG() {
+        return String.format("<ellipse cx='%d' cy='%d' rx='%d' ry='%d' fill='%s' stroke='black' stroke-width='%d'/>",
+                x + width / 2, y + height / 2, width / 2, height / 2, color, thickness);
+    }
 
     public int getWidth() {
         return width;

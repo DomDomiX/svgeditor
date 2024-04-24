@@ -18,6 +18,22 @@ public class MyPanel extends JPanel {
         repaint();
     }
 
+    // Metoda pro získání počtu tvarů
+    public int getShapeCount() {
+        return tvary.size();
+    }
+
+    public String generateSVG() {
+        StringBuilder svgBuilder = new StringBuilder();
+        svgBuilder.append("<svg width='800' height='600' xmlns='http://www.w3.org/2000/svg'>\n");
+        for (Shape shape : tvary) {
+            svgBuilder.append(shape.toSVG()).append("\n");
+        }
+        svgBuilder.append("</svg>");
+        System.out.println("Generated SVG: " + svgBuilder.toString()); // Výpis vygenerovaného SVG
+        return svgBuilder.toString();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

@@ -42,6 +42,12 @@ public class Rectangle extends Shape {
         }
     }
 
+    @Override
+    public String toSVG() {
+        return String.format("<rect x='%d' y='%d' width='%d' height='%d' fill='%s' stroke='black' stroke-width='%d'/>",
+                x, y, width, height, color, thickness);
+    }
+
     public int getWidth() {
         return width;
     }

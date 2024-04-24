@@ -41,6 +41,11 @@ public class Line extends Shape{
                 break;
         }
     }
+    @Override
+    public String toSVG() {
+        return String.format("<line x1='%d' y1='%d' x2='%d' y2='%d' style='stroke:%s;stroke-width:%d'/>",
+                x, y, x2, y2, color, thickness);
+    }
 
     public int getX2() {
         return x2;

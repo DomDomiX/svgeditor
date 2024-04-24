@@ -15,6 +15,7 @@ public class MainFrame extends JFrame
     private int cisloKruh;
     private int cisloOval;
     private MyPanel panel;
+    private JEditorPane panelSVG;
     private ShapeTableModel shapeModel;
     private ShapeTable shapeTable;
     private AttributesTable attributesTable;
@@ -24,17 +25,38 @@ public class MainFrame extends JFrame
         super("SVG Editor");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Vytvoření JTabbedPane
-        tabsPane = new JTabbedPane();
-        add(tabsPane, BorderLayout.CENTER); // Přidání do BorderLayout.CENTER
-
         // Vytvoření panelů pro jednotlivé záložky
         panel = new MyPanel();
-        MyPanel panelSVG = new MyPanel();
 
-        // Přidání panelů do záložek
-        tabsPane.addTab("Editor", panel);
-        tabsPane.addTab("SVG", panelSVG);
+        // Vytvoření editor panelu pro zobrazení SVG
+        panelSVG = new JEditorPane();
+        panelSVG.setContentType("text/html"); // Nastavení, aby mohl zobrazovat HTML/SVG
+        panelSVG.setEditable(false);
+
+        // Vytvoření JTabbedPane
+        tabsPane = new JTabbedPane();
+
+        // Vytvoření a konfigurace JTabbedPane
+        tabsPane.addTab("Editor", new JScrollPane(panel));
+        tabsPane.addTab("SVG", new JScrollPane(panelSVG));
+        add(tabsPane, BorderLayout.CENTER);
+
+        panelSVG.setContentType("image/svg+xml");
+
+        // Vytvoření menu
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menuNastroje = new JMenu("Nástroje");
+        JMenuItem menuItemGenerateSVG = new JMenuItem("Vygenerovat SVG");
+
+        // Sestavení menu
+        menuNastroje.add(menuItemGenerateSVG);
+        menuBar.add(menuNastroje);
+
+        // Přidání akce k tlačítku menu
+        menuItemGenerateSVG.addActionListener(e -> exportSVG());
+
+        // Nastavení menu bar pro JFrame
+        setJMenuBar(menuBar);
 
         // Vytvoření tabulky a jejího modelu
         shapeModel = new ShapeTableModel();
@@ -96,6 +118,16 @@ public class MainFrame extends JFrame
     public void addShape(Shape shape) {
         panel.addShape(shape);
         shapeModel.addShape(shape);
+    }
+
+    private void exportSVG() {
+        if (panel != null && panel.getShapeCount() > 0) {
+            String svgData = panel.generateSVG();
+            panelSVG.setText(svgData);
+            System.out.println("SVG has been generated and set to panelSVG."); // Debugovací výpis
+        } else {
+            System.err.println("Panel is not initialized or no shapes are present.");
+        }
     }
 
 }

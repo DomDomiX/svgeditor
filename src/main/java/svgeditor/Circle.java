@@ -35,6 +35,12 @@ public class Circle extends Shape{
         }
     }
 
+    @Override
+    public String toSVG() {
+        return String.format("<circle cx='%d' cy='%d' r='%d' fill='%s' stroke='black' stroke-width='%d'/>",
+                x, y, radius, color, thickness);
+    }
+
 
     public int getRadius() {
         return radius;

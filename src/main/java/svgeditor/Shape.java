@@ -58,27 +58,9 @@ public abstract class Shape {
         return thickness;
     }
 
-    public void setX(int x){
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setThickness(int thickness) {
-        this.thickness = thickness;
-    }
-
+    //Abstraktní třídy
     public abstract Map<String, Object> getAttributes();
+    public abstract String toSVG();
 
     public abstract void draw(Graphics g);
 }
