@@ -20,6 +20,11 @@ public class ShapeTableModel extends AbstractTableModel {
         fireTableDataChanged(); // Upozorní tabulku na změny v datech
     }
 
+    public void setShapes(List<Shape> shapes) {
+        this.shapes = shapes;
+        fireTableDataChanged(); // Aktualizuje tabulku, aby odrážela změny
+    }
+
     @Override
     public int getRowCount() {
         return shapes.size();

@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Line extends Shape{
     private int x2;
@@ -45,23 +47,25 @@ public class Line extends Shape{
     }
     @Override
     public String toSVG() {
-        return String.format("<line x1='%d' y1='%d' x2='%d' y2='%d' style='stroke:%s;stroke-width:%d'/>",
-                x, y, x2, y2, color, thickness);
+        return String.format("<line x1='%d' y1='%d' x2='%d' y2='%d' style='stroke:%s;stroke-width:%d' id='%s'/>",
+                x, y, x2, y2, color, thickness, name);
     }
 
-    public static Line parseFromSVG(String svg) {
-        Pattern pattern = Pattern.compile("<line x1='(\\d+)' y1='(\\d+)' x2='(\\d+)' y2='(\\d+)' style='stroke:([^;]*);stroke-width:(\\d+)'/>");
+    public static List<Shape> parseFromSVG(String svg) {
+        List<Shape> lines = new ArrayList<>();
+        Pattern pattern = Pattern.compile("<line x1='(\\d+)' y1='(\\d+)' x2='(\\d+)' y2='(\\d+)' style='stroke:([^;]*);stroke-width:(\\d+)' id='([^']*)'/>");
         Matcher matcher = pattern.matcher(svg);
-        if (matcher.find()) {
+        while (matcher.find()) {
             int x1 = Integer.parseInt(matcher.group(1));
             int y1 = Integer.parseInt(matcher.group(2));
             int x2 = Integer.parseInt(matcher.group(3));
             int y2 = Integer.parseInt(matcher.group(4));
             String color = matcher.group(5);
             int thickness = Integer.parseInt(matcher.group(6));
-            return new Line(x1, y1, color, "Line", x2, y2, thickness);
+            String name = matcher.group(7);
+            lines.add(new Line(x1, y1, color, name, x2, y2, thickness));
         }
-        return null;
+        return lines;
     }
 
     public int getX2() {

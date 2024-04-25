@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Rectangle extends Shape {
     private int width;
@@ -39,30 +41,32 @@ public class Rectangle extends Shape {
                 this.height = Integer.parseInt(value.toString());
                 break;
             default:
-                super.setAttribute(key, value);  // Volání metody v nadřazené třídě, pokud se nejedná o atribut specifický pro Line
+                super.setAttribute(key, value);  // Volání metody v nadřazené třídě, pokud se nejedná o atribut specifický pro Rectangle
                 break;
         }
     }
 
     @Override
     public String toSVG() {
-        return String.format("<rect x='%d' y='%d' width='%d' height='%d' fill='%s' stroke='black' stroke-width='%d'/>",
-                x, y, width, height, color, thickness);
+        return String.format("<rect x='%d' y='%d' width='%d' height='%d' fill='%s' stroke='black' stroke-width='%d' id='%s'/>",
+                x, y, width, height, color, thickness, name);
     }
 
-    public static Rectangle parseFromSVG(String svg) {
-        Pattern pattern = Pattern.compile("<rect x='(\\d+)' y='(\\d+)' width='(\\d+)' height='(\\d+)' fill='([^']*)' stroke='([^']*)' stroke-width='(\\d+)'/>");
+    public static List<Shape> parseFromSVG(String svg) {
+        List<Shape> rectangles = new ArrayList<>();
+        Pattern pattern = Pattern.compile("<rect x='(\\d+)' y='(\\d+)' width='(\\d+)' height='(\\d+)' fill='([^']*)' stroke='([^']*)' stroke-width='(\\d+)' id='([^']*)'/>");
         Matcher matcher = pattern.matcher(svg);
-        if (matcher.find()) {
+        while (matcher.find()) {
             int x = Integer.parseInt(matcher.group(1));
             int y = Integer.parseInt(matcher.group(2));
             int width = Integer.parseInt(matcher.group(3));
             int height = Integer.parseInt(matcher.group(4));
             String color = matcher.group(5);
             int thickness = Integer.parseInt(matcher.group(7));
-            return new Rectangle(x, y, color, "Rectangle", width, height, thickness);
+            String name = matcher.group(8);
+            rectangles.add(new Rectangle(x, y, color, name, width, height, thickness));
         }
-        return null;
+        return rectangles;
     }
 
     public int getWidth() {

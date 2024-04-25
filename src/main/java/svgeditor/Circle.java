@@ -1,9 +1,12 @@
 package svgeditor;
+
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Circle extends Shape{
     private int radius;
@@ -29,32 +32,34 @@ public class Circle extends Shape{
     public void setAttribute(String key, Object value) {
         switch (key) {
             case "Rádius":
-                this.radius = Integer.parseInt(value.toString());  // Ujistěte se, že hodnota je ve správném formátu a může být převedena na int
+                this.radius = Integer.parseInt(value.toString());
                 break;
             default:
-                super.setAttribute(key, value);  // Správně delegujte všechny ostatní atributy na nadřazenou třídu
+                super.setAttribute(key, value);
                 break;
         }
     }
 
     @Override
     public String toSVG() {
-        return String.format("<circle cx='%d' cy='%d' r='%d' fill='%s' stroke='black' stroke-width='%d'/>",
-                x, y, radius, color, thickness);
+        return String.format("<circle cx='%d' cy='%d' r='%d' fill='%s' stroke='black' stroke-width='%d' id='%s'/>",
+                x, y, radius, color, thickness, name);
     }
 
-    public static Circle parseFromSVG(String svg) {
-        Pattern pattern = Pattern.compile("<circle cx='(\\d+)' cy='(\\d+)' r='(\\d+)' fill='([^']*)' stroke='([^']*)' stroke-width='(\\d+)'/>");
+    public static List<Shape> parseFromSVG(String svg) {
+        List<Shape> circles = new ArrayList<>();
+        Pattern pattern = Pattern.compile("<circle cx='(\\d+)' cy='(\\d+)' r='(\\d+)' fill='([^']*)' stroke='([^']*)' stroke-width='(\\d+)' id='([^']*)'/>");
         Matcher matcher = pattern.matcher(svg);
-        if (matcher.find()) {
+        while (matcher.find()) {
             int cx = Integer.parseInt(matcher.group(1));
             int cy = Integer.parseInt(matcher.group(2));
             int radius = Integer.parseInt(matcher.group(3));
             String color = matcher.group(4);
             int thickness = Integer.parseInt(matcher.group(6));
-            return new Circle(cx, cy, radius, color, "Circle", thickness);
+            String name = matcher.group(7);
+            circles.add(new Circle(cx, cy, radius, color, name, thickness));
         }
-        return null;
+        return circles;
     }
 
 

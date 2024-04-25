@@ -107,6 +107,7 @@ public class MainFrame extends JFrame
 
         // Přidání několika tvarů do panelu a modelu tabulky
         addShape(new Rectangle(300, 200, "#2C2F93", "Obdelnik" + (++cisloObdelnik), 80, 60, 2));
+        addShape(new Rectangle(300, 200, "#2C2F93", "Obdelnik" + (++cisloObdelnik), 80, 60, 2));
         addShape(new Circle(400, 500, 40, "#2C2F93", "Kruh" + (++cisloKruh), 2));
         addShape(new Line(600, 700, "#2C2F93", "Linka" + (++cisloLine), 50, 50, 2));
         addShape(new Oval(800, 300, "#2C2F93", "Oval" + (++cisloOval), 100, 50, 2));
@@ -129,6 +130,8 @@ public class MainFrame extends JFrame
         shapeModel.addShape(shape);
     }
 
+
+
     private void exportSVG() {
         if (panel != null && panel.getShapeCount() > 0) {
             String svgData = panel.generateSVG();
@@ -141,15 +144,17 @@ public class MainFrame extends JFrame
 
     private void updateShapesFromSVG() {
         String svgContent = panelSVG.getText();
-        List<Shape> newShapes = parseSVG(svgContent);
-        panel.clearShapes();
+        List<Shape> newShapes = parseSVG(svgContent); // Tato metoda by měla být implementována pro parsování SVG stringu do listu Shape objektů
+        panel.clearShapes(); // Odstraní všechny tvary z panelu
         for (Shape shape : newShapes) {
-            panel.addShape(shape);
+            panel.addShape(shape); // Přidá nové tvary do panelu
         }
-        panel.repaint();
+        panel.repaint(); // Překreslí panel s novými tvary
+        shapeModel.setShapes(newShapes); // aktualizace modelu pro tabulku atributů
+        attributesTable.repaint(); // Překreslí tabulku atributů
     }
 
-    private List<Shape> parseSVG(String svg) {
+    /*private List<Shape> parseSVG(String svg) {
         List<Shape> shapes = new ArrayList<>();
         Shape rect = Rectangle.parseFromSVG(svg);
         if (rect != null) shapes.add(rect);
@@ -159,6 +164,15 @@ public class MainFrame extends JFrame
         if (oval != null) shapes.add(oval);
         Shape line = Line.parseFromSVG(svg);
         if (line != null) shapes.add(line);
+        return shapes;
+    }*/
+
+    private List<Shape> parseSVG(String svg) {
+        List<Shape> shapes = new ArrayList<>();
+        shapes.addAll(Rectangle.parseFromSVG(svg));
+        shapes.addAll(Circle.parseFromSVG(svg));
+        shapes.addAll(Oval.parseFromSVG(svg));
+        shapes.addAll(Line.parseFromSVG(svg));
         return shapes;
     }
 }
