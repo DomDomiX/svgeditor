@@ -23,6 +23,12 @@ public class MyPanel extends JPanel {
         return tvary.size();
     }
 
+    // Metoda pro odstranění všech tvarů
+    public void clearShapes() {
+        tvary.clear();
+        repaint();  // Překreslí panel, aby odstranil zobrazení předchozích tvarů
+    }
+
     public String generateSVG() {
         StringBuilder svgBuilder = new StringBuilder();
         svgBuilder.append("<svg width='800' height='600' xmlns='http://www.w3.org/2000/svg'>\n");

@@ -6,6 +6,12 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainFrame extends JFrame
 {
@@ -31,7 +37,7 @@ public class MainFrame extends JFrame
         // Vytvoření editor panelu pro zobrazení SVG
         panelSVG = new JEditorPane();
         panelSVG.setContentType("text/html"); // Nastavení, aby mohl zobrazovat HTML/SVG
-        panelSVG.setEditable(false);
+        panelSVG.setEditable(true);
 
         // Vytvoření JTabbedPane
         tabsPane = new JTabbedPane();
@@ -47,13 +53,16 @@ public class MainFrame extends JFrame
         JMenuBar menuBar = new JMenuBar();
         JMenu menuNastroje = new JMenu("Nástroje");
         JMenuItem menuItemGenerateSVG = new JMenuItem("Vygenerovat SVG");
+        JMenuItem applyChanges = new JMenuItem("Potvrdit změny v SVG");
 
         // Sestavení menu
         menuNastroje.add(menuItemGenerateSVG);
         menuBar.add(menuNastroje);
+        menuNastroje.add(applyChanges);
 
         // Přidání akce k tlačítku menu
         menuItemGenerateSVG.addActionListener(e -> exportSVG());
+        applyChanges.addActionListener(e -> updateShapesFromSVG());
 
         // Nastavení menu bar pro JFrame
         setJMenuBar(menuBar);
@@ -130,4 +139,26 @@ public class MainFrame extends JFrame
         }
     }
 
+    private void updateShapesFromSVG() {
+        String svgContent = panelSVG.getText();
+        List<Shape> newShapes = parseSVG(svgContent);
+        panel.clearShapes();
+        for (Shape shape : newShapes) {
+            panel.addShape(shape);
+        }
+        panel.repaint();
+    }
+
+    private List<Shape> parseSVG(String svg) {
+        List<Shape> shapes = new ArrayList<>();
+        Shape rect = Rectangle.parseFromSVG(svg);
+        if (rect != null) shapes.add(rect);
+        Shape circle = Circle.parseFromSVG(svg);
+        if (circle != null) shapes.add(circle);
+        Shape oval = Oval.parseFromSVG(svg);
+        if (oval != null) shapes.add(oval);
+        Shape line = Line.parseFromSVG(svg);
+        if (line != null) shapes.add(line);
+        return shapes;
+    }
 }

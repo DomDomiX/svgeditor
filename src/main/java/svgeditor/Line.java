@@ -3,6 +3,8 @@ package svgeditor;
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Line extends Shape{
     private int x2;
@@ -45,6 +47,21 @@ public class Line extends Shape{
     public String toSVG() {
         return String.format("<line x1='%d' y1='%d' x2='%d' y2='%d' style='stroke:%s;stroke-width:%d'/>",
                 x, y, x2, y2, color, thickness);
+    }
+
+    public static Line parseFromSVG(String svg) {
+        Pattern pattern = Pattern.compile("<line x1='(\\d+)' y1='(\\d+)' x2='(\\d+)' y2='(\\d+)' style='stroke:([^;]*);stroke-width:(\\d+)'/>");
+        Matcher matcher = pattern.matcher(svg);
+        if (matcher.find()) {
+            int x1 = Integer.parseInt(matcher.group(1));
+            int y1 = Integer.parseInt(matcher.group(2));
+            int x2 = Integer.parseInt(matcher.group(3));
+            int y2 = Integer.parseInt(matcher.group(4));
+            String color = matcher.group(5);
+            int thickness = Integer.parseInt(matcher.group(6));
+            return new Line(x1, y1, color, "Line", x2, y2, thickness);
+        }
+        return null;
     }
 
     public int getX2() {

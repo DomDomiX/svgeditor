@@ -3,6 +3,8 @@ package svgeditor;
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Rectangle extends Shape {
     private int width;
@@ -46,6 +48,21 @@ public class Rectangle extends Shape {
     public String toSVG() {
         return String.format("<rect x='%d' y='%d' width='%d' height='%d' fill='%s' stroke='black' stroke-width='%d'/>",
                 x, y, width, height, color, thickness);
+    }
+
+    public static Rectangle parseFromSVG(String svg) {
+        Pattern pattern = Pattern.compile("<rect x='(\\d+)' y='(\\d+)' width='(\\d+)' height='(\\d+)' fill='([^']*)' stroke='([^']*)' stroke-width='(\\d+)'/>");
+        Matcher matcher = pattern.matcher(svg);
+        if (matcher.find()) {
+            int x = Integer.parseInt(matcher.group(1));
+            int y = Integer.parseInt(matcher.group(2));
+            int width = Integer.parseInt(matcher.group(3));
+            int height = Integer.parseInt(matcher.group(4));
+            String color = matcher.group(5);
+            int thickness = Integer.parseInt(matcher.group(7));
+            return new Rectangle(x, y, color, "Rectangle", width, height, thickness);
+        }
+        return null;
     }
 
     public int getWidth() {

@@ -2,6 +2,8 @@ package svgeditor;
 import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Circle extends Shape{
     private int radius;
@@ -39,6 +41,20 @@ public class Circle extends Shape{
     public String toSVG() {
         return String.format("<circle cx='%d' cy='%d' r='%d' fill='%s' stroke='black' stroke-width='%d'/>",
                 x, y, radius, color, thickness);
+    }
+
+    public static Circle parseFromSVG(String svg) {
+        Pattern pattern = Pattern.compile("<circle cx='(\\d+)' cy='(\\d+)' r='(\\d+)' fill='([^']*)' stroke='([^']*)' stroke-width='(\\d+)'/>");
+        Matcher matcher = pattern.matcher(svg);
+        if (matcher.find()) {
+            int cx = Integer.parseInt(matcher.group(1));
+            int cy = Integer.parseInt(matcher.group(2));
+            int radius = Integer.parseInt(matcher.group(3));
+            String color = matcher.group(4);
+            int thickness = Integer.parseInt(matcher.group(6));
+            return new Circle(cx, cy, radius, color, "Circle", thickness);
+        }
+        return null;
     }
 
 
