@@ -1,20 +1,22 @@
 package svgeditor;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class MainFrame extends JFrame
-{
+public class MainFrame extends JFrame {
     private final JTabbedPane tabsPane;
     private int cisloObdelnik;
     private int cisloLine;
@@ -52,17 +54,60 @@ public class MainFrame extends JFrame
         // Vytvoření menu
         JMenuBar menuBar = new JMenuBar();
         JMenu menuNastroje = new JMenu("Nástroje");
-        JMenuItem menuItemGenerateSVG = new JMenuItem("Vygenerovat SVG");
-        JMenuItem applyChanges = new JMenuItem("Potvrdit změny v SVG");
+        JMenuItem generateSVG = new JMenuItem("Vygenerovat SVG");
+        JMenuItem applyChangesSVG = new JMenuItem("Potvrdit změny v SVG");
+
+        JMenu menuFile = new JMenu("Uložit a Načíst");
+        JMenuItem panelSave = new JMenuItem("Uložit Editor");
+        JMenuItem SVGSave = new JMenuItem("Uložit SVG");
+        JMenuItem SVGLoad = new JMenuItem("Načíst SVG");
 
         // Sestavení menu
-        menuNastroje.add(menuItemGenerateSVG);
+        menuNastroje.add(generateSVG);
         menuBar.add(menuNastroje);
-        menuNastroje.add(applyChanges);
+        menuBar.add(menuFile);
+        menuNastroje.add(applyChangesSVG);
+        menuFile.add(panelSave);
+        menuFile.add(SVGSave);
+        menuFile.add(SVGLoad);
+
 
         // Přidání akce k tlačítku menu
-        menuItemGenerateSVG.addActionListener(e -> exportSVG());
-        applyChanges.addActionListener(e -> updateShapesFromSVG());
+        generateSVG.addActionListener(e -> exportSVG());
+        applyChangesSVG.addActionListener(e -> updateShapesFromSVG());
+
+        // Ukládání panelu a SVG
+        panelSave.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Vyberte soubor pro uložení obrázku");
+            // Nastavíme filtr souborů, aby uživatel viděl pouze soubory PNG
+            fileChooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
+            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                savePanel(panel, new File(file.getAbsolutePath() + ".png")); // Přidá příponu .png, pokud není zadána
+            }
+        });
+
+        SVGSave.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Vyberte soubor pro uložení SVG");
+            fileChooser.setFileFilter(new FileNameExtensionFilter("SVG Files", "svg"));
+            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                saveSVG(panelSVG, new File(file.getAbsolutePath() + ".svg")); // Přidá příponu .svg, pokud není zadána
+            }
+        });
+
+        // Načítání SVG
+        SVGLoad.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Vyberte SVG soubor k načtení");
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                loadSVG(file, panelSVG);
+            }
+        });
+
 
         // Nastavení menu bar pro JFrame
         setJMenuBar(menuBar);
@@ -130,8 +175,6 @@ public class MainFrame extends JFrame
         shapeModel.addShape(shape);
     }
 
-
-
     private void exportSVG() {
         if (panel != null && panel.getShapeCount() > 0) {
             String svgData = panel.generateSVG();
@@ -154,19 +197,6 @@ public class MainFrame extends JFrame
         attributesTable.repaint(); // Překreslí tabulku atributů
     }
 
-    /*private List<Shape> parseSVG(String svg) {
-        List<Shape> shapes = new ArrayList<>();
-        Shape rect = Rectangle.parseFromSVG(svg);
-        if (rect != null) shapes.add(rect);
-        Shape circle = Circle.parseFromSVG(svg);
-        if (circle != null) shapes.add(circle);
-        Shape oval = Oval.parseFromSVG(svg);
-        if (oval != null) shapes.add(oval);
-        Shape line = Line.parseFromSVG(svg);
-        if (line != null) shapes.add(line);
-        return shapes;
-    }*/
-
     private List<Shape> parseSVG(String svg) {
         List<Shape> shapes = new ArrayList<>();
         shapes.addAll(Rectangle.parseFromSVG(svg));
@@ -174,5 +204,46 @@ public class MainFrame extends JFrame
         shapes.addAll(Oval.parseFromSVG(svg));
         shapes.addAll(Line.parseFromSVG(svg));
         return shapes;
+    }
+
+    public void savePanel(JPanel panel, File file) {
+        int width = panel.getWidth();
+        int height = panel.getHeight();
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = image.createGraphics();
+        panel.paint(graphics2D);
+        try {
+            ImageIO.write(image, "png", file); // Ulož jako PNG
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveSVG(JEditorPane panelSVG, File file) {
+        String content = panelSVG.getText();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadSVG(File file, JEditorPane editorPane) {
+        try {
+            String svgContent = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+            editorPane.setText(svgContent);
+
+            List<Shape> shapes = parseSVG(svgContent);
+            panel.clearShapes();
+            for (Shape shape : shapes) {
+                panel.addShape(shape);
+            }
+            panel.repaint();
+
+            shapeModel.setShapes(shapes); // Aktualizuje model tabulky s novými tvary
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Nepodařilo se načíst SVG soubor: " + e.getMessage());
+        }
     }
 }
