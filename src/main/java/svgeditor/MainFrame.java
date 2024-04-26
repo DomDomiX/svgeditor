@@ -56,6 +56,7 @@ public class MainFrame extends JFrame {
         JMenu menuNastroje = new JMenu("Nástroje");
         JMenuItem generateSVG = new JMenuItem("Vygenerovat SVG");
         JMenuItem applyChangesSVG = new JMenuItem("Potvrdit změny v SVG");
+        JMenuItem drawRectangle = new JMenuItem("Nakreslit obdelník");
 
         JMenu menuFile = new JMenu("Uložit a Načíst");
         JMenuItem panelSave = new JMenuItem("Uložit Editor");
@@ -63,18 +64,20 @@ public class MainFrame extends JFrame {
         JMenuItem SVGLoad = new JMenuItem("Načíst SVG");
 
         // Sestavení menu
-        menuNastroje.add(generateSVG);
         menuBar.add(menuNastroje);
         menuBar.add(menuFile);
+        menuNastroje.add(generateSVG);
         menuNastroje.add(applyChangesSVG);
+        menuNastroje.add(drawRectangle);
         menuFile.add(panelSave);
         menuFile.add(SVGSave);
         menuFile.add(SVGLoad);
 
-
         // Přidání akce k tlačítku menu
         generateSVG.addActionListener(e -> exportSVG());
         applyChangesSVG.addActionListener(e -> updateShapesFromSVG());
+
+        drawRectangle.addActionListener(e -> panel.startDrawingRectangle());
 
         // Ukládání panelu a SVG
         panelSave.addActionListener(e -> {
@@ -116,6 +119,9 @@ public class MainFrame extends JFrame {
         shapeModel = new ShapeTableModel();
         shapeTable = new ShapeTable(); // Vytvoření instance ShapeTable
         shapeTable.setModel(shapeModel); // Nastavení modelu pro tabulku
+
+        panel.setShapeTableModel(shapeModel);
+        panel.setShapeTable(shapeTable);
 
         // Vytvoření JScrollPane pro tabulku
         JScrollPane tableScrollPane = new JScrollPane(shapeTable);

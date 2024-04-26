@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ShapeTableModel extends AbstractTableModel {
-
     private List<Shape> shapes;
     private String[] columnNames = {"Tvary"};
 
@@ -16,7 +15,7 @@ public class ShapeTableModel extends AbstractTableModel {
     }
 
     public void addShape(Shape shape) {
-        shapes.add(shape);
+        this.shapes.add(shape);
         fireTableDataChanged(); // Upozorní tabulku na změny v datech
     }
 

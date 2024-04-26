@@ -90,7 +90,7 @@ public class AttributesTableModel extends AbstractTableModel {
                 panel.repaint(); // Překreslení panelu
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error setting attribute value: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Chyba v nastavování hodnoty: " + e.getMessage());
         }
     }
 
