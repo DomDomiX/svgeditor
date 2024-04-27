@@ -53,25 +53,32 @@ public class MainFrame extends JFrame {
 
         // Vytvoření menu
         JMenuBar menuBar = new JMenuBar();
+
         JMenu menuNastroje = new JMenu("Nástroje");
-        JMenuItem generateSVG = new JMenuItem("Vygenerovat SVG");
-        JMenuItem applyChangesSVG = new JMenuItem("Potvrdit změny v SVG");
         JMenuItem drawRectangle = new JMenuItem("Nakreslit obdelník");
 
-        JMenu menuFile = new JMenu("Uložit a Načíst");
+        JMenu menuSave = new JMenu("Uložit");
         JMenuItem panelSave = new JMenuItem("Uložit Editor");
         JMenuItem SVGSave = new JMenuItem("Uložit SVG");
+
+        JMenu menuLoad = new JMenu("Otevřít");
         JMenuItem SVGLoad = new JMenuItem("Načíst SVG");
 
+        JMenu menuSVG = new JMenu("SVG Nástroje");
+        JMenuItem generateSVG = new JMenuItem("Vygenerovat SVG");
+        JMenuItem applyChangesSVG = new JMenuItem("Potvrdit změny v SVG");
+
         // Sestavení menu
+        menuBar.add(menuLoad);
+        menuBar.add(menuSave);
         menuBar.add(menuNastroje);
-        menuBar.add(menuFile);
-        menuNastroje.add(generateSVG);
-        menuNastroje.add(applyChangesSVG);
+        menuBar.add(menuSVG);
+        menuLoad.add(SVGLoad);
+        menuSave.add(panelSave);
+        menuSave.add(SVGSave);
+        menuSVG.add(generateSVG);
+        menuSVG.add(applyChangesSVG);
         menuNastroje.add(drawRectangle);
-        menuFile.add(panelSave);
-        menuFile.add(SVGSave);
-        menuFile.add(SVGLoad);
 
         // Přidání akce k tlačítku menu
         generateSVG.addActionListener(e -> exportSVG());
@@ -110,7 +117,6 @@ public class MainFrame extends JFrame {
                 loadSVG(file, panelSVG);
             }
         });
-
 
         // Nastavení menu bar pro JFrame
         setJMenuBar(menuBar);
