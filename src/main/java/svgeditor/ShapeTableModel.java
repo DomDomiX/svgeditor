@@ -45,6 +45,11 @@ public class ShapeTableModel extends AbstractTableModel {
         }
     }
 
+    // Metoda pro získání všech tvarů
+    public List<Shape> getShapes() {
+        return shapes;
+    }
+
     @Override
     public String getColumnName(int column) {
         return columnNames[column];

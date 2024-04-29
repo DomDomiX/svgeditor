@@ -1,5 +1,8 @@
 package svgeditor;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -7,10 +10,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -60,6 +60,7 @@ public class MainFrame extends JFrame {
         JMenu menuSave = new JMenu("Uložit");
         JMenuItem panelSave = new JMenuItem("Uložit Editor");
         JMenuItem SVGSave = new JMenuItem("Uložit SVG");
+        JMenuItem JSONSave = new JMenuItem("Uložit JSON");
 
         JMenu menuLoad = new JMenu("Otevřít");
         JMenuItem SVGLoad = new JMenuItem("Načíst SVG");
@@ -76,6 +77,7 @@ public class MainFrame extends JFrame {
         menuLoad.add(SVGLoad);
         menuSave.add(panelSave);
         menuSave.add(SVGSave);
+        menuSave.add(JSONSave);
         menuSVG.add(generateSVG);
         menuSVG.add(applyChangesSVG);
         menuNastroje.add(drawRectangle);
@@ -95,6 +97,16 @@ public class MainFrame extends JFrame {
             if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
                 savePanel(panel, new File(file.getAbsolutePath() + ".png")); // Přidá příponu .png, pokud není zadána
+            }
+        });
+
+        JSONSave.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Vyberte soubor pro uložení JSONu");
+            fileChooser.setFileFilter(new FileNameExtensionFilter("JSON Files", "json"));
+            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = new File(fileChooser.getSelectedFile().getAbsolutePath() + ".json");
+                saveJSON(file, shapeModel); // Předpokládám, že shapeModel je instance ShapeTableModel
             }
         });
 
@@ -234,7 +246,19 @@ public class MainFrame extends JFrame {
     public void saveSVG(JEditorPane panelSVG, File file) {
         String content = panelSVG.getText();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(content);
+            writer.write(content); // Zápis obsahu do souboru
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveJSON(File file, ShapeTableModel shapeModel) {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+        // Převedení seznamu tvarů na JSON
+        String json = gson.toJson(shapeModel.getShapes());  // getShapes vrací seznam tvarů
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(json);
         } catch (IOException e) {
             e.printStackTrace();
         }
